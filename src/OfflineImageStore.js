@@ -306,13 +306,15 @@ class OfflineImageStore {
       })
       .fetch(method, source.uri, source.headers)
       .then(() => {
-        source.callback({
-          res: {
-            uri: source.uri,
-            imgFilePath: imageFilePath
-          },
-          err: null
-        })
+        if (source.callback) {
+          source.callback({
+            res: {
+              uri: source.uri,
+              imgFilePath: imageFilePath
+            },
+            err: null
+          })
+        }
         // Add entry to entry list!!
         this._addEntry(source.uri, imageFilePath)
         // Notify subscribed handler AND Persist entries to AsyncStorage for offline
@@ -320,10 +322,12 @@ class OfflineImageStore {
       })
       .catch((err) => {
         console.log('err', err)
-        source.callback({
-          res: null,
-          err
-        })
+        if (source.callback) {
+          source.callback({
+            res: null,
+            err
+          })
+        }
         if (this.store.debugMode) {
           console.log('Failed to download image', source.uri)
         }
